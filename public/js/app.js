@@ -1,16 +1,3 @@
-const users = [
-    {
-        id: 1,
-        name: 'Sayan',
-        email: 'sayan@test.com'
-    },
-    {
-        id: 2,
-        name: 'Alex',
-        email: 'alex@test.com'
-    }
-];
-
 const usersContainer = document.querySelector('#users-container');
 const addUserBtn = document.querySelector('#add-user-btn');
 
@@ -40,10 +27,18 @@ function renderUser(user){
     usersContainer.appendChild(card);
 }
 
-users.forEach(user => {
-    renderUser(user);
-})
+// Fetch real users from Laravel API
+fetch('/users')
+    .then(response => response.json())
+    .then(users => {
+        users.forEach(user => {
+            renderUser(user);
+        });
+    })
+    .catch(error => console.error('Error fetching users:', error));
 
+
+// Add User button (currently just adds to the page, doesn't save to database)
 addUserBtn.addEventListener('click', function() {
 
     const nameInput = document.querySelector("#name-input");
@@ -54,20 +49,12 @@ addUserBtn.addEventListener('click', function() {
         return;
     }
 
-    const lastUser = users[users.length - 1];
-    const nextId = lastUser.id + 1;
-
-    const NewUser = {
-        id: nextId,
+    const newUser = {
         name: nameInput.value,
-        email : emailInput.value
+        email: emailInput.value
     }
 
-    users.push(NewUser);
-
-    renderUser(NewUser);
-
-    console.log(users);
+    renderUser(newUser);
 
     nameInput.value = '';
     emailInput.value = '';
